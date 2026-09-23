@@ -103,30 +103,38 @@ Any course outside your major can be taken pass/fail, and — the part nobody me
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
+**My relevance cutoff:** 0.6
 
-**Question:**
-
-**Answer:**
-
-```
-```
-
-**My relevance cutoff:**
-
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+My five in-scope questions scored 0.248–0.457. My five out-of-scope questions
+scored 0.825–0.934. That's a gap of 0.37 with nothing in between, so the
+cutoff wasn't a close call — 0.6 sits almost exactly in the middle of it,
+and I kept the starter's default rather than moving it artificially.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| Is the housing lottery actually random? | Yes | 0.248 |
+| Does dining dollars roll over between semesters? | Yes | 0.256 |
+| Can I still get pass/fail after seeing my midterm grade? | Yes | 0.402 |
+| Does financial aid still apply if I study abroad? | Yes | 0.376 |
+| If I withdraw from a class, does it affect my GPA? | Yes | 0.457 |
+| What is the capital of Mongolia? | No | 0.825 |
+| How do I change the oil in a diesel engine? | No | 0.934 |
+| Who won the 1994 World Cup? | No | 0.886 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.844 |
+| How do I write a for loop in Rust? | No | 0.896 |
+
+**Question:** Is the housing lottery actually random?
+
+**Answer:**
+
+The housing lottery is not entirely random in the way most people assume. While rising sophomores receive a number drawn at random, juniors and seniors are ordered first by accumulated credit hours, with random selection used only as a tie-breaker (admin_housing_lottery.txt).
+
+
+Retrieval returned 5 chunks (best distance 0.248), but only one —
+admin_housing_lottery.txt — was actually about the lottery; the rest were
+loosely related (registration, parking, two unrelated housing reviews). The
+grounding instruction correctly kept the model from using any of them, and
+it named its actual source inline.
 
 ## How I Used AI
 
