@@ -29,54 +29,77 @@
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** paragraph-based, not a fixed character count
+**Overlap:** none (paragraphs don't need it — see below)
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+I picked campus_life because it's short, single-topic posts, and Milestone 1
+confirmed that early: 88 documents averaging 317 characters, all under the
+800-character default, so the starter's fallback chunker never split
+anything (88 documents in, 88 chunks out).
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
+That's not nothing — it told me the real question wasn't "what character
+count?" but "does any single post actually contain more than one topic?"
+Rereading my documents, most are one paragraph, one fact (dining dollars,
+housing lottery, pass/fail deadlines). A few — like course_biol_160.txt —
+bundle a title with several distinct paragraphs (course format, workload,
+exam advice) that don't need to travel together.
 
-     Milestone 3. -->
+So I replaced the chunker with paragraph-based splitting: split on blank-line
+breaks, but re-attach the document's title/heading line to every resulting
+chunk (many posts open with a one-line label like "On the housing lottery"
+or "BIOL 160 Cell Biology," and a paragraph split naively loses that context).
+Fragments under 150 characters get merged into the previous paragraph rather
+than kept as their own chunk, since a title alone, or a one-line aside, isn't
+answerable on its own.
+
+Result: 88 documents became 92 chunks. Only 4 documents actually split
+(health_center.txt, housing_old_brewhouse.txt, study_library_hours.txt,
+transit_shuttle.txt) — the other 84 are single-paragraph posts that stayed
+exactly as they were, which is the right outcome, not a missed opportunity.
+course_biol_160.txt is a useful edge case: it has three paragraphs, but two
+of them fell under the 150-character merge threshold, so it recombined back
+into one chunk — and reading it, that's correct: the whole thing reads as
+one complete answer about the course.
 
 ## Sample Chunks
 
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
+**Chunk 1** — source: `course_biol_160.txt#0` — produced by: `chunker.py::split_documents`
 
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
+BIOL 160 Cell Biology
 
-     Milestone 3. -->
+I lived here my sophomore year. Format is lecture three times a week with a weekly lab. Assessment: four unit tests and a cumulative final. Not curved.
 
-**Chunk 1** — source: `` — produced by: ``
+Expect 9 to 11 hours a week, the heaviest first-year course by reputation.
 
-```
-```
+The one piece of advice: the unit tests come fast, roughly every three weeks; falling behind once is very hard to recover from.
 
-**Chunk 2** — source: `` — produced by: ``
 
-```
-```
+**Chunk 2** — source: `health_center.txt#0` — produced by: `chunker.py::split_documents`
 
-**Chunk 3** — source: `` — produced by: ``
+The health centre
 
-```
-```
+Walk-in hours are 8am to 11am; everything after that is by appointment and appointments run about a week out. If something is urgent, go at 8am and wait rather than booking.
 
-**Chunk 4** — source: `` — produced by: ``
 
-```
-```
+**Chunk 3** — source: `health_center.txt#1` — produced by: `chunker.py::split_documents`
 
-**Chunk 5** — source: `` — produced by: ``
+The health centre
 
-```
-```
+Counselling is separate, in the same building, and has its own intake process with a shorter wait than people expect — usually three or four days for a first session.
+
+
+**Chunk 4** — source: `admin_housing_lottery.txt#0` — produced by: `chunker.py::split_documents`
+
+On the housing lottery
+
+The housing lottery is not random in the way most people assume. Rising sophomores get a number drawn at random, but juniors and seniors are ordered by accumulated credit hours first, and only tie-break randomly. That means a senior who took summer courses reliably beats a senior who didn't. Numbers come out the second week of March and selection runs over four evenings.
+
+
+**Chunk 5** — source: `admin_pass_fail_option.txt#0` — produced by: `chunker.py::split_documents`
+
+On the pass/fail option
+
+Any course outside your major can be taken pass/fail, and — the part nobody mentions — you can declare it as late as week eight, after you've seen your midterm. A pass needs a C- or better. Two per year, maximum eight across a degree.
 
 ## Sample Answer
 
