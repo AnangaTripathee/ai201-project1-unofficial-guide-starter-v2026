@@ -309,27 +309,58 @@ real, and kept 0.6.
 
 ## Run Log — Before
 
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
-
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
+- Produced by: `run_eval.py::main` (criteria 1–3) and manual testing via `store.py::search` / `app.py retrieve` (criteria 4–5)
+- Retrieval: `store.py::search`, chunks from `chunker.py::split_documents`
+- Corpus: `campus_life` (index variant `default`)
+- top-k: 5 · relevance cutoff: 0.6
+- Runs per question: 3, caching off
+- When: 2026-09-29
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks keep a fact and its exception together | 4 of 5 | 4/5* | 4/5* | 4/5* | MET |
+| 5. Retrieval doesn't confuse near-duplicate topics | 4 of 5 | 2/2 | 2/2 | 2/2 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+*Criteria 3–5 are deterministic (retrieval and chunking don't change between
+runs), so the same number appears in all three columns — that's correct, not
+lazy, per the instructions.
+
+\* One chunk (study_library_hours.txt#0) is under my 150-character merge
+threshold but wasn't merged, because it's the first paragraph after the
+heading and my merge logic only looks backward. It still contains a complete
+fact-plus-exception ("2am during term" / "10pm during reading week"), so it
+doesn't currently fail the criterion — flagged as a known limitation, not a
+functional miss.
+
+## Real output — evidence for each criterion
+
+**Criterion 1 & 2** — Q: "Is the housing lottery actually random?" (run 1 of 3)
+
+No, the housing lottery is not entirely random. While rising sophomores get a number drawn at random, juniors and seniors are ordered by accumulated credit hours first, with random selection used only for tie-breaks (admin_housing_lottery.txt).
+
+Source named inline: `admin_housing_lottery.txt`. Produced by `generate.py::answer_from_chunks`, retrieval by `store.py::search`.
+
+**Criterion 3** — out-of-scope question, refused:
+
+What is the capital of Mongolia? → best distance 0.825, over the 0.6 cutoff → refused
+
+All 5 out-of-scope questions refused (5/5). Produced by `gate.py::check`.
+
+**Criterion 4** — chunk with fact + exception intact, `chunker.py::split_documents`:
+
+On the dining dollars
+
+Declining balance — what everyone calls dining dollars — rolls over from the autumn semester to the spring, but not from spring to the following autumn. Whatever is left in May disappears.
+
+
+**Criterion 5** — sibling-pair disambiguation, `store.py::search`:
+
+Q: "does a work-study job count against my financial aid the same as a regular campus job?"
+#1 0.1853 admin_campus_jobs_and_financial_aid.txt (correct sibling)
+#2 0.5599 money_jobs.txt (related but wrong sibling — correctly ranked second)
 
 ## Verdicts
 
