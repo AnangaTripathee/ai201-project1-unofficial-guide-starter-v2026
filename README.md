@@ -374,11 +374,40 @@ Q: "does a work-study job count against my financial aid the same as a regular c
 
 ## Diagnoses
 
-<!-- For each miss: which stage caused it, and how.
+I missed nothing this round — all five criteria came back MET. Rather than
+treat that as "the system is excellent," here's an honest look at which
+targets were set safely rather than tightly, and what I'd tighten.
 
-     The five stages: loading → chunking → embedding → retrieval → generation.
+**Criterion 3 (gate stops out-of-corpus questions) was too easy.** My
+OUT_OF_SCOPE questions (world capitals, car engines, sports trivia, drug
+dosages, Rust syntax) share essentially no vocabulary with a campus admin
+corpus, so the gap between in-scope (0.248–0.457) and out-of-scope
+(0.825–0.934) is nearly 0.37 wide — there was no way for this to be a close
+call. A tighter version would test *adjacent* topics my corpus doesn't
+cover but a shallow reader might expect it to — e.g. "what's the meal plan
+like at [a different, fictional university]" or "how do I appeal a parking
+ticket" (parking permits are covered, ticket appeals aren't). That would
+actually stress the gate's precision instead of just its recall.
 
-     Milestone 3. -->
+**Criterion 5 (near-duplicate confusion) had the thinnest real evidence.**
+As noted in the Verdicts table, my target names "4 of 5," but I only
+identified 2 genuine sibling-pairs in the whole corpus. 2/2 is a real,
+positive result, but it's not the same strength of evidence as 4/5 out of a
+true sample of 5. If I were rewriting this criterion, I'd either (a) commit
+to finding 5 real sibling-pairs before writing the target, or (b) rewrite
+the target itself to match what I actually have: "both identified
+sibling-pairs are disambiguated correctly." That's the criterion I'd
+tighten, and to that specific rewording.
+
+**Criterion 4 surfaced a real, if currently harmless, bug** —
+`study_library_hours.txt#0` is under my merge threshold but never got merged,
+because my merge logic only looks backward at the previous paragraph, not
+forward. It happened not to break anything this round (the chunk is still a
+complete, correct fact-plus-exception pair), but it's a latent gap, not a
+false alarm — a differently-worded short first paragraph elsewhere could
+produce a genuinely truncated chunk. This is the strongest, most concrete
+candidate for **Milestone 4's "one improvement"**, since it's a real,
+named, mechanism-level issue rather than a vague thing to tighten.
 
 ## The Improvement
 
