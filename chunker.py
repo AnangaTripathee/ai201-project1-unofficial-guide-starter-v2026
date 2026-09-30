@@ -83,22 +83,20 @@ def fallback_split(
 MIN_CHUNK_CHARS = 150  # merge a fragment this short into its neighbor
 
 
+MIN_CHUNK_CHARS = 150  # merge a fragment this short into a neighbor
+
+
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
     Split on paragraph breaks, keeping each document's title/heading line
     attached to every chunk it produces.
 
-    Most documents in campus_life are a single paragraph already, and this
-    strategy leaves those untouched — one document, one chunk, same as the
-    fallback. It only does real work on the handful of documents that open
-    with a short title line (e.g. "BIOL 160 Cell Biology") followed by
-    several distinct paragraphs (overview, workload, exam advice). Splitting
-    those means a narrow question doesn't pull in an unrelated paragraph from
-    the same file — but a paragraph split naively would lose the title that
-    gives it context, so the title is re-attached to each piece.
-
-    Fragments under MIN_CHUNK_CHARS (a stray short line) are merged into the
-    previous paragraph rather than kept as their own chunk.
+    Fragments under MIN_CHUNK_CHARS are merged into a neighboring paragraph
+    rather than kept as their own chunk: backward into the previous paragraph
+    when one exists, or forward into the next paragraph when the fragment is
+    first and has nothing before it yet. (An earlier version only merged
+    backward, which let a short first paragraph survive as an undersized
+    chunk — study_library_hours.txt#0 was exactly this case in Unit 2.)
     """
     chunks: list[Chunk] = []
 
@@ -109,6 +107,12 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
         if len(paragraphs) > 1 and len(paragraphs[0]) < 80:
             heading = paragraphs.pop(0)
 
+        # Merge a short leading paragraph forward — it has nothing before it.
+        while len(paragraphs) > 1 and len(paragraphs[0]) < MIN_CHUNK_CHARS:
+            paragraphs[1] = paragraphs[0] + "\n\n" + paragraphs[1]
+            paragraphs.pop(0)
+
+        # Merge any remaining short fragments backward, as before.
         merged: list[str] = []
         for para in paragraphs:
             if merged and len(para) < MIN_CHUNK_CHARS:
