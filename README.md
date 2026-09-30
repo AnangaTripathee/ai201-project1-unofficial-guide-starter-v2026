@@ -364,19 +364,13 @@ Q: "does a work-study job count against my financial aid the same as a regular c
 
 ## Verdicts
 
-<!-- MET or MISSED for each of the five, against the target you wrote last
-     unit — not a new one. Plus a sentence on how you decided. That sentence
-     matters most where it was close.
-
-     Milestone 2. -->
-
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer (4 of 5) | MET | All 5 questions, across all 3 runs, retrieved a chunk containing the specific fact named in `expects` (credit-hours ordering, the autumn→spring asymmetry, week eight, "doesn't affect GPA," "travels with you") — 5/5 every run, clearing the 4/5 target with room to spare. |
+| 2 | Every answer names a source (5 of 5) | MET | All 15 answers (5 questions × 3 runs) named a specific `.txt` file inline in the answer text itself, not just in the "Sources retrieved" line — checked by reading every answer in the run log, not just the distances. |
+| 3 | Gate stops out-of-corpus questions (4 of 5) | MET | All 5 `OUT_OF_SCOPE` questions were refused, with best distances (0.825–0.934) sitting far above the 0.6 cutoff and far from my in-scope group's ceiling (0.457) — no borderline cases to argue about. |
+| 4 | Chunks keep a fact and its exception together (4 of 5) | MET | Sampled and read all 92 chunks, not just 5 — found one chunk (`study_library_hours.txt#0`) that's under my 150-character merge threshold but wasn't merged (a real gap in my merge logic, since it only checks backward), yet it still contains a complete fact-plus-exception pair with nothing cut off. So the criterion holds on content even though it exposed a code limitation worth fixing later. |
+| 5 | Retrieval doesn't confuse near-duplicate topics (4 of 5) | MET | Tested both sibling pairs I identified in Milestone 2 last unit — withdrawal vs. add/drop (0.457 vs. retrieved-but-not-top-1) and work-study vs. non-work-study jobs (0.185 vs. 0.560) — both correctly ranked the right sibling first, 2/2. |
 
 ## Diagnoses
 
